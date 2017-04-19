@@ -1,2 +1,2 @@
 # Kaggle-MobileODT-Cervical-Cancer
-Code aimed at identifying cervical cancer from images
+Classification of cervix types for cervical cancer screening. The classification is made from images and uses neural networks.
