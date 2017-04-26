@@ -1,1 +1,7 @@
 Data/
+
+\.ipynb_checkpoints/
+
+digit_recognition\.ipynb
+
+TensorFlow_data/
