@@ -7,3 +7,5 @@ digit_recognition\.ipynb
 TensorFlow_data/
 
 submissions/
+
+*.pyc
