@@ -30,3 +30,12 @@ def batch_list(inputlist, batch_size):
     list_of_batches = [inputlist[ii: ii+batch_size]
                        for ii in range(0, len(inputlist), batch_size)]
     return list_of_batches
+
+
+def create_folder(path_to_folder):
+    """
+    If the path_to_folder does not point to an existing folder, this function
+    creates such a folder.
+    """
+    if not os.path.exists(path_to_folder):
+        os.makedirs(path_to_folder)

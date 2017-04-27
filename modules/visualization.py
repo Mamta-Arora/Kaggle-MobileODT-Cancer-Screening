@@ -9,7 +9,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-def drawSlices(list_of_image_matrices, figsizes=(16, 4)):
+def display_images(list_of_image_matrices, figsizes=(16, 4)):
     """
     Makes subplots containing images drawn from the input arrays.
     Input: a list of matrices describing the pixels. The matrices are not
@@ -30,3 +30,15 @@ def drawSlices(list_of_image_matrices, figsizes=(16, 4)):
     for remainingax in axes.ravel()[len(list_of_image_matrices):]:
         remainingax.axis("off")
     return fig, axes
+
+
+def display_single_image(imagearray):
+    """
+    Displays a single image, given an image array, and prints out the image
+    shape.
+    """
+    array_to_plot = imagearray
+    print("Image shape: {}".format(imagearray.shape))
+    plt.imshow(array_to_plot)
+    plt.axis("off")
+    plt.show()

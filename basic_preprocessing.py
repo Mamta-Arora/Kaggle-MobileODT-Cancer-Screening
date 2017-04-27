@@ -92,7 +92,7 @@ class DataPreprocessor(object):
 
     def preprocess_save(self, data_folder="./TensorFlow_data",
                         training_subfolder="/training_data",
-                        testing_subfolder="/testing_data", 
+                        testing_subfolder="/testing_data",
                         resize_shape=(150, 150, 3), batch_size=2**7,
                         parallelize=True):
         """
