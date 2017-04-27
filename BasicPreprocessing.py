@@ -92,12 +92,14 @@ testingarrayimage_path = "/testing_images.npy"
 testingarrayname_path = "/testing_namelabels.npy"
 categoryorder_path = "/type123_order.npy"
 if isfile(testing_folder + testingarrayimage_path) is False:
+    print("Creating testing data arrays...")
     testing_images = array_all_images(testing_pathnames, parallelize=True)
     if len(testing_images) != len(testing_pathnames):
         print("SOME TESTING IMAGES WERE NOT STORED AS NUMPY ARRAYS!")
     np.save(testing_folder + testingarrayimage_path, testing_images)
     np.save(testing_folder + testingarrayname_path, testing_pathnames)
     np.save(testing_folder + categoryorder_path, all_Types)
+    print("Testing data arrays created")
 
 
 # ===================== USER INPUT =====================
@@ -114,6 +116,7 @@ num_saved_batches = sum(["training_images_batch" in filename
 # If we have a different number of batches saved comapred to what we want,
 # the batches are wrong and need recomputing.
 if num_saved_batches != len(training_pathnames_batches):
+    print("Creating training data arrays...")
     # We could delete the old files, but this is dangerous, since a typo could
     # remove all files on the computer. We simply overwrite the files we have.
     for ii, batch in enumerate(tqdm(training_pathnames_batches)):
@@ -124,3 +127,4 @@ if num_saved_batches != len(training_pathnames_batches):
         training_labels_batch = array_all_labels(batch, enc, parallelize=True)
         np.save(training_folder + "/training_labels_batch" + str(ii) + ".npy",
                 training_labels_batch)
+    print("Training data arrays created")
