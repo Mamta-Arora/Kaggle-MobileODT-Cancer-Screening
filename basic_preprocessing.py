@@ -9,7 +9,6 @@ Created on Thu Apr 27 11:09:41 2017
 # Import relevant packages
 import numpy as np
 import matplotlib.pyplot as plt
-import os
 
 from os.path import isfile
 
@@ -17,7 +16,8 @@ import scipy.ndimage
 from sklearn.preprocessing import LabelBinarizer
 from tqdm import tqdm
 
-from modules.path_munging import all_image_paths, batch_list, create_folder
+from modules.path_munging import (all_image_paths, batch_list, create_folder,
+                                  count_batches, get_modelpath_and_name)
 from modules.visualization import display_images
 from modules.image_preprocessing import (get_Type, array_all_images,
                                          array_all_labels)
@@ -135,9 +135,7 @@ class DataPreprocessor(object):
         # We first turn training_pathnames into batches of pathnames.
         training_pathnames_batches = batch_list(self.training_pathnames,
                                                 batch_size)
-        num_saved_batches = sum(["training_images_batch" in filename
-                                 for filename in list(
-                                        os.walk(trainingarrays_folder))[0][2]])
+        num_saved_batches = count_batches(trainingarrays_folder)
         # If we have a different number of batches saved comapred to what we
         # want, the batches are wrong and need recomputing.
         if num_saved_batches != len(training_pathnames_batches):
