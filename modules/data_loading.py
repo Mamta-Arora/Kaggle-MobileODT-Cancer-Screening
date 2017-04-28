@@ -6,12 +6,7 @@ Created on Thu Apr 27 14:12:39 2017
 @author: daniele
 """
 
-# import tensorflow as tf
-
-# import os
-
 import numpy as np
-# import matplotlib.pyplot as plt
 
 
 def generic_data_loader(batch_location, batch_number, image_numbers=[]):
