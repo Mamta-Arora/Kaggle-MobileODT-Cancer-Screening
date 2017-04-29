@@ -27,21 +27,31 @@ def generic_data_loader(batch_location, batch_number, image_numbers=[]):
                        ".npy")[image_numbers]
 
 
-def load_training_data(batch_number, image_numbers=[]):
+def load_training_data(batch_number, image_numbers=[], batch_loc=""):
     """
     Loads the training data from files. It is possible to specify an interval
     of images to load, or by defauly load th entire batch.
+    batch_loc is the folder in which the data is found.
     """
-    batch_location = "./TensorFlow_data/training_data/training_images_batch"
+    if batch_loc == "":
+        batch_location = "./TensorFlow_data/training_data"
+    else:
+        batch_location = batch_loc
+    batch_location = batch_location + "/training_images_batch"
     return generic_data_loader(batch_location, batch_number,
                                image_numbers=image_numbers)
 
 
-def load_training_labels(batch_number, image_numbers=[]):
+def load_training_labels(batch_number, image_numbers=[], batch_loc=""):
     """
     Loads the training labels from files. It is possible to specify an interval
     of labels to load, or by defauly load th entire batch.
+    batch_loc is the folder in which the data is found.
     """
-    batch_location = "./TensorFlow_data/training_data/training_labels_batch"
+    if batch_loc == "":
+        batch_location = "./TensorFlow_data/training_data/"
+    else:
+        batch_location = batch_loc
+    batch_location = batch_location + "/training_labels_batch"
     return generic_data_loader(batch_location, batch_number,
                                image_numbers=image_numbers)
