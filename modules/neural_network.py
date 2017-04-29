@@ -40,6 +40,13 @@ def neural_net_keep_prob_input():
     return tf.placeholder(tf.float32, name="keep_prob")
 
 
+def neural_net_learning_rate_input():
+    """
+    Return a Tensor for the learning rate
+    """
+    return tf.placeholder(tf.float64, name="learning_rate")
+
+
 # =============================================================================
 # ================== FUNCTION FOR CONVOLUTION AND MAX POOLING =================
 # =============================================================================
@@ -211,7 +218,7 @@ def make_cost_optimizer_accuracy(logits, labels, learning_rate):
                tf.nn.softmax_cross_entropy_with_logits(logits=logits,
                                                        labels=labels))
     optimizer = tf.train.AdamOptimizer(
-                    learning_rate=learning_rate
+                    learning_rate=learning_rate, name='Adam'
                     ).minimize(cost)
 
     # Accuracy

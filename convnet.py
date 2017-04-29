@@ -12,6 +12,7 @@ from modules.visualization import display_single_image
 from modules.neural_network import (neural_net_image_input,
                                     neural_net_label_input,
                                     neural_net_keep_prob_input,
+                                    neural_net_learning_rate_input,
                                     make_convolutional_layers,
                                     flatten,
                                     make_fullyconnected_layers,
@@ -38,14 +39,17 @@ class ConvNet(object):
 
         y = neural_net_label_input(output_channels)
         self.y = y
+        learn_rate_variable = neural_net_learning_rate_input()
+        self.learn_rate_variable = learn_rate_variable
         (cost,
          optimizer,
-         accuracy) = make_cost_optimizer_accuracy(logits, y, learning_rate)
+         accuracy) = make_cost_optimizer_accuracy(logits, y,
+                                                  learn_rate_variable)
         self.cost = cost
         self.optimizer = optimizer
         self.accuracy = accuracy
 
-    def test_loading(self, batch_and_index=(0, 19)):
+    def test_loading(self, batch_and_index=(0, 19), batch_loc=""):
         """
         Tests whether the images in the folder are loaded and display as
         expected.
@@ -56,7 +60,8 @@ class ConvNet(object):
                            visualized.
         """
         display_single_image(load_training_data(
-                                       batch_and_index[0])[batch_and_index[1]])
+                                      batch_and_index[0],
+                                      batch_loc=batch_loc)[batch_and_index[1]])
 
     def conv_net(self, input_shape, output_channels, convolutional_layers,
                  connected_layers):
@@ -91,9 +96,9 @@ class ConvNet(object):
         """
         self.learning_rate = learning_rate
         # Should perhaps name the optimizer "Adam", but probably not necessary
-        self.optimizer = tf.train.AdamOptimizer(
-                         learning_rate=learning_rate
-                         ).minimize(self.cost)
+        # self.optimizer = tf.train.AdamOptimizer(
+        #                 learning_rate=self.learn_rate_variable, name='Adam'
+        #                 ).minimize(self.cost)
 
     def get_stats(self, session, training_inputarray, training_labels,
                   validation_inputarray, validation_labels, printout=True):
@@ -109,16 +114,19 @@ class ConvNet(object):
                                           feed_dict={
                                                  self.x: training_inputarray,
                                                  self.y: training_labels,
-                                                 self.keep_prob_variable: 1.0})
+                                                 self.keep_prob_variable: 1.0,
+                                                 self.learn_rate_variable: self.learning_rate})
         validation_cost_value = session.run(self.cost,
                                             feed_dict={
                                                  self.x: validation_inputarray,
                                                  self.y: validation_labels,
-                                                 self.keep_prob_variable: 1.0})
+                                                 self.keep_prob_variable: 1.0,
+                                                 self.learn_rate_variable: self.learning_rate})
         accuracy_value = session.run(self.accuracy,
                                      feed_dict={self.x: validation_inputarray,
                                                 self.y: validation_labels,
-                                                self.keep_prob_variable: 1.0})
+                                                self.keep_prob_variable: 1.0,
+                                                self.learn_rate_variable: self.learning_rate})
         if printout:
             print("\nTraining Loss: {}".format(training_cost_value))
             print("Validation Loss: {}".format(validation_cost_value))
@@ -199,17 +207,17 @@ class ConvNet(object):
                                  feed_dict={
                                       self.x: minibatch_inputarrays,
                                       self.y: minibatch_labels,
-                                      self.keep_prob_variable: self.keep_prob})
-                        # Evaluate how well the network is currently doing
-                        (training_cost_value,
-                         validation_cost_value,
-                         accuracy_value) = self.get_stats(
-                                                         sess,
-                                                         minibatch_inputarrays,
-                                                         minibatch_labels,
-                                                         val_array,
-                                                         val_labels,
-                                                         printout=printout)
+                                      self.keep_prob_variable: self.keep_prob,
+                                      self.learn_rate_variable: self.learning_rate})
+                    # Evaluate how well the network is currently doing
+                    (training_cost_value,
+                     validation_cost_value,
+                     accuracy_value) = self.get_stats(sess,
+                                                      minibatch_inputarrays,
+                                                      minibatch_labels,
+                                                      val_array,
+                                                      val_labels,
+                                                      printout=printout)
                     if printout:
                         print('Epoch {:>2}, Batch {} '
                               'complete'.format(epoch, batch_i))
