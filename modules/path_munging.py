@@ -7,6 +7,8 @@ Created on Thu Apr 27 11:26:31 2017
 """
 
 import os
+import pandas as pd
+import numpy as np
 
 
 def all_image_paths(folderpath):
@@ -65,4 +67,52 @@ def get_next_epoch(savedmodel_path):
 
 
 def get_modelpath_and_name(savedmodel_path):
+    """
+    Help function which returns the full path to a model, excluding the epoch
+    number at the end, e.g. "./mybestmodel-40" returns "./mybestmodel".
+    """
     return savedmodel_path[:savedmodel_path.rfind("-")]
+
+
+def image_index(pathname):
+    """
+    Helper function for submission. Takes the path to an image, e.g.
+    "./image_folder/15.jpg", and returns the image name, in this example
+    "15.jpg".
+    """
+    return pathname[pathname.rfind("/")+1:]
+
+
+def get_date_string():
+    """
+    Returns the current date and time in the format "yyyy-mm-dd_hh-mm".
+    For example, 30 April 2017 at 16:40 is returned as '2017-04-30_16-40'.
+    """
+    currentime = pd.datetime.now().isoformat()
+    # Format the time
+    dateandminute = currentime[:currentime.rfind(":")
+                               ].replace("T", "_").replace(":", "-")
+    return dateandminute
+
+
+def submission(probabilities, testing_folder, submission_folder):
+    """
+    DESCRIPTION. SAY THAT WE PUT THE DATETIME WHEN WE SAVE
+    """
+    create_folder(submission_folder)
+
+    # Get the list of image names ["15.jpg", "42.jpg", "1.jpg", ...]
+    image_names = np.load(testing_folder + "/testing_namelabels.npy")
+    image_names = [image_index(path) for path in image_names]
+    # Get the order of the catogeries ["Type_1", "Type_2", "Type_3"]
+    categories = np.load(testing_folder + "/type123_order.npy")
+
+    # Make a dataframe containing the information
+    submission_df = pd.DataFrame(probabilities, columns=categories)
+    submission_df["image_name"] = image_names
+    submission_df.set_index("image_name", inplace=True)
+
+    filename = submission_folder + "/submissions_" + get_date_string() + ".csv"
+    # Now save to csv
+    submission_df.to_csv(filename)
+    return filename
