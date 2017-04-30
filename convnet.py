@@ -90,16 +90,6 @@ class ConvNet(object):
 
         return logits
 
-    def set_learning_rate(self, learning_rate):
-        """
-        DESCRIPTION
-        """
-        self.learning_rate = learning_rate
-        # Should perhaps name the optimizer "Adam", but probably not necessary
-        # self.optimizer = tf.train.AdamOptimizer(
-        #                 learning_rate=self.learn_rate_variable, name='Adam'
-        #                 ).minimize(self.cost)
-
     def get_stats(self, session, training_inputarray, training_labels,
                   validation_inputarray, validation_labels, printout=True):
         """
