@@ -115,18 +115,21 @@ class ConvNet(object):
                                                  self.x: training_inputarray,
                                                  self.y: training_labels,
                                                  self.keep_prob_variable: 1.0,
-                                                 self.learn_rate_variable: self.learning_rate})
+                                                 self.learn_rate_variable:
+                                                 self.learning_rate})
         validation_cost_value = session.run(self.cost,
                                             feed_dict={
                                                  self.x: validation_inputarray,
                                                  self.y: validation_labels,
                                                  self.keep_prob_variable: 1.0,
-                                                 self.learn_rate_variable: self.learning_rate})
+                                                 self.learn_rate_variable:
+                                                 self.learning_rate})
         accuracy_value = session.run(self.accuracy,
                                      feed_dict={self.x: validation_inputarray,
                                                 self.y: validation_labels,
                                                 self.keep_prob_variable: 1.0,
-                                                self.learn_rate_variable: self.learning_rate})
+                                                self.learn_rate_variable:
+                                                self.learning_rate})
         if printout:
             print("\nTraining Loss: {}".format(training_cost_value))
             print("Validation Loss: {}".format(validation_cost_value))
@@ -208,7 +211,8 @@ class ConvNet(object):
                                       self.x: minibatch_inputarrays,
                                       self.y: minibatch_labels,
                                       self.keep_prob_variable: self.keep_prob,
-                                      self.learn_rate_variable: self.learning_rate})
+                                      self.learn_rate_variable:
+                                      self.learning_rate})
                     # Evaluate how well the network is currently doing
                     (training_cost_value,
                      validation_cost_value,
