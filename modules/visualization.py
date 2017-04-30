@@ -54,10 +54,11 @@ def plot_accuracy_trainloss_valloss(accuracies, train_losses, val_losses):
     plt.ylabel("Accuracy")
     plt.show()
 
-    plt.plot(train_losses)
-    plt.plot(val_losses)
+    plt.plot(train_losses, label="Training loss")
+    plt.plot(val_losses, label="Validation loss")
     plt.xlabel("Epoch")
     plt.ylabel("Loss")
+    plt.legend()
     plt.show()
 
 
@@ -71,8 +72,9 @@ def plot_best_scores(best_accuracy, best_train_loss, best_val_loss):
     plt.ylabel("Best Accuracy")
     plt.show()
 
-    plt.plot(best_train_loss)
-    plt.plot(best_val_loss)
+    plt.plot(best_train_loss, label="Training loss")
+    plt.plot(best_val_loss, label="Validation loss")
     plt.xlabel("Number of batches in training")
     plt.ylabel("Best loss")
+    plt.legend()
     plt.show()
