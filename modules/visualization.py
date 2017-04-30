@@ -78,3 +78,55 @@ def plot_best_scores(best_accuracy, best_train_loss, best_val_loss):
     plt.ylabel("Best loss")
     plt.legend()
     plt.show()
+
+
+def type_labels(prob, categories):
+    """
+    Helper function to display_image_probabilities.
+    Input:
+        prob: a 1-d list describing the one-hot encoded predicted probabilities
+              of an image.
+        categories: a 1-d list containing the classification labels that each
+                    element in prob refers to.
+    Returns a string formatted to relate each category to its corresponding
+    probability, e.g. "Type 1: 0.1\nType 2:0.6\nType 3:0.3".
+    """
+    type_prob_list = [(categ.replace("_", " ") + ": " +
+                       str(np.round(p_i, decimals=3)) + "\n")
+                      for p_i, categ in zip(prob, categories)]
+    return "".join(type_prob_list)[:-1]
+
+
+def display_image_probabilities(list_of_image_matrices, probabilities,
+                                testing_folder, figsizes=(16, 4)):
+    """
+    Makes subplots containing images drawn from the input arrays, along with
+    the predicted probabilities that the images should be in each class.
+    Input:
+        list_of_image_matrices: a list of matrices describing the pixels.
+        probabilities: a list of probabilities, where each element is a list
+                       containing the probability for each class (one-hot
+                       encoding).
+        testing_folder: the path to the folder containing the testing images.
+    Returns the tuple (fig, axes).
+    """
+    # Get the classification labels that one-hot-encoded probability refers to
+    categories = np.load(testing_folder + "/type123_order.npy")
+
+    # We'll make a figure with subplots in it
+    numberofrows = int(np.ceil(len(list_of_image_matrices) / 6.))
+    fig, axes = plt.subplots(nrows=numberofrows, ncols=6,
+                             figsize=(figsizes[0], figsizes[1]*numberofrows))
+    # Now on each axis we can draw the image with its probabilities
+    for (currentax, currentimage, prob) in zip(axes.ravel(),
+                                               list_of_image_matrices,
+                                               probabilities):
+        currentax.imshow(currentimage, cmap="gray")
+        # The ticks are useless and ugly
+        currentax.set_xticks([])
+        currentax.set_yticks([])
+        currentax.set_xlabel(type_labels(prob, categories), size=14)
+    # Finally we remove those plots that have nothing in them
+    for remainingax in axes.ravel()[len(list_of_image_matrices):]:
+        remainingax.axis("off")
+    return fig, axes
