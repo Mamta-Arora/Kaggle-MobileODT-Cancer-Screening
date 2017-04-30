@@ -247,6 +247,22 @@ def num_batches(adhoc_modelname):
     return number_of_batches
 
 
+def sort_accuracies(allaccuracies):
+    """
+    Helper function for best_accuracy_trainval_loss.
+    Input:
+        dict of the form {"modelname_batch0123..": [list_of_accuracies,
+                                                    list_of_train_losses,
+                                                    list_of_val_losses]}
+    Returns:
+        list of the form [(int, score_array), ...]
+    """
+    sorted_list_of_accuracies = sorted([(num_batches(key), val)
+                                        for key, val in allaccuracies.items()],
+                                       key=lambda x: x[0])
+    return sorted_list_of_accuracies
+
+
 def best_accuracy_trainval_loss(allaccuracies):
     """
     Takes a dict containing all scores (accuracy, training loss, validation
@@ -256,14 +272,12 @@ def best_accuracy_trainval_loss(allaccuracies):
         dict of the form {"modelname_batch0123..": [list_of_accuracies,
                                                     list_of_train_losses,
                                                     list_of_val_losses]}
-    Output:
+    Returns:
         tuple of the form (list_of_best_accuracy, list_of_best_train_loss,
                            list_of_best_val_loss)
     """
     # Sort allaccuracies by how many training batches were used
-    allaccuracies_sorted = sorted([(num_batches(key), val)
-                                   for key, val in allaccuracies.items()],
-                                  key=lambda x: x[0])
+    allaccuracies_sorted = sort_accuracies(allaccuracies)
     # allaccuracies_sorted is a list of tuples: [(int, score_array), ...]
     # We turn this into a single numpy array
     scoring_array = np.array([arrays
