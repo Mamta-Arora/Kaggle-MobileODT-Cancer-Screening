@@ -42,3 +42,37 @@ def display_single_image(imagearray):
     plt.imshow(array_to_plot)
     plt.axis("off")
     plt.show()
+
+
+def plot_accuracy_trainloss_valloss(accuracies, train_losses, val_losses):
+    """
+    Given the parameters accuracies, train_losses, val_losses, plots the
+    accuracy and losses through the training epochs.
+    """
+    plt.plot(accuracies)
+    plt.xlabel("Epoch")
+    plt.ylabel("Accuracy")
+    plt.show()
+
+    plt.plot(train_losses)
+    plt.plot(val_losses)
+    plt.xlabel("Epoch")
+    plt.ylabel("Loss")
+    plt.show()
+
+
+def plot_best_scores(best_accuracy, best_train_loss, best_val_loss):
+    """
+    Given the best accuracy, training loss, validation loss for each training
+    run (with increasing amount of data), plots the values.
+    """
+    plt.plot(best_accuracy)
+    plt.xlabel("Number of batches in training")
+    plt.ylabel("Best Accuracy")
+    plt.show()
+
+    plt.plot(best_train_loss)
+    plt.plot(best_val_loss)
+    plt.xlabel("Number of batches in training")
+    plt.ylabel("Best loss")
+    plt.show()
