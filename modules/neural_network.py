@@ -227,3 +227,53 @@ def make_cost_optimizer_accuracy(logits, labels, learning_rate):
                               name='accuracy')
 
     return cost, optimizer, accuracy
+
+
+# =============================================================================
+# ======== FUNCTIONS FOR EVALUATING TRAINING SIZE VS MODEL COMPLEXITY =========
+# =============================================================================
+
+
+def num_batches(adhoc_modelname):
+    """
+    Helper function to best_accuracy_trainval_loss. Takes a model name of the
+    form "modelnamebatch01234" and returns the number of batches used to train
+    it, which in this example is 5 (since [0, 1, 2, 3, 4] has five elements).
+    N.B. the number 10 counts 2 toward the number of batches. This is not a
+    problem, since this function is only used to order lists in increasing
+    order.
+    """
+    number_of_batches = len(adhoc_modelname[adhoc_modelname.rfind("h")+1:])
+    return number_of_batches
+
+
+def best_accuracy_trainval_loss(allaccuracies):
+    """
+    Takes a dict containing all scores (accuracy, training loss, validation
+    loss) for each training run and returns 1-d lists of the best accuracy,
+    best training loss, best validation loss for each training run.
+    Input:
+        dict of the form {"modelname_batch0123..": [list_of_accuracies,
+                                                    list_of_train_losses,
+                                                    list_of_val_losses]}
+    Output:
+        tuple of the form (list_of_best_accuracy, list_of_best_train_loss,
+                           list_of_best_val_loss)
+    """
+    # Sort allaccuracies by how many training batches were used
+    allaccuracies_sorted = sorted([(num_batches(key), val)
+                                   for key, val in allaccuracies.items()],
+                                  key=lambda x: x[0])
+    # allaccuracies_sorted is a list of tuples: [(int, score_array), ...]
+    # We turn this into a single numpy array
+    scoring_array = np.array([arrays
+                              for length, arrays in allaccuracies_sorted])
+    # Each score_array consists of values for accuracy, trainining loss and
+    # validation loss. Out of each of these, we select the best score, for each
+    # training run.
+    best_accuracy = np.apply_along_axis(max, 1, scoring_array[:, 0])
+    best_train_loss = np.apply_along_axis(min, 1, scoring_array[:, 1])
+    best_val_loss = np.apply_along_axis(min, 1, scoring_array[:, 2])
+    # Now we have the 1-d lists where every element is the best score for that
+    # training session.
+    return best_accuracy, best_train_loss, best_val_loss
