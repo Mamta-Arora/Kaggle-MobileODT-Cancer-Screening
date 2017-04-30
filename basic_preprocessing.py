@@ -17,7 +17,7 @@ from sklearn.preprocessing import LabelBinarizer
 from tqdm import tqdm
 
 from modules.path_munging import (all_image_paths, batch_list, create_folder,
-                                  count_batches, get_modelpath_and_name)
+                                  count_batches)
 from modules.visualization import display_images
 from modules.image_preprocessing import (get_Type, array_all_images,
                                          array_all_labels)

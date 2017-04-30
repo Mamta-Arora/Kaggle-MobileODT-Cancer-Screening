@@ -68,7 +68,21 @@ class ConvNet(object):
     def conv_net(self, input_shape, output_channels, convolutional_layers,
                  connected_layers):
         """
-        DESCRIPTION
+        Creates a convolutional neural network based on the given
+        specifications. Uses a tensorflow variable for training and saves it
+        as self.keep_prob_variable. Also saves the input array variable as
+        self.x.
+        Parameters:
+            input_shape: tuple of length 3 specifying the size of each
+                         dimension of the input.
+            output_channels: int specifying the number of output channels, i.e.
+                             the number of classification categories.
+            convolutional_layers: list where each element specifies the
+                                  parameters of a convolution + max pooling
+                                  layer. See function make_convolutional_layers
+                                  for format.
+            connected_layers: a list containing full-connected-layer sizes,
+                              e.g. [10, 20].
         """
         # Remove previous weights, bias, inputs, etc..
         tf.reset_default_graph()
@@ -129,6 +143,11 @@ class ConvNet(object):
         return training_cost_value, validation_cost_value, accuracy_value
 
     def count_training_batches(self, folder):
+        """
+        Convenience function which counts the number of training-batch files
+        in the specified folder.
+        Input: string specifying the path to the folder.
+        """
         return count_batches(folder)
 
     def train(self, epochs=10, load_saved_model="", training_batches=[],
@@ -136,10 +155,45 @@ class ConvNet(object):
               validation_labels=[], validation_batchnum=0, printout=True,
               save_model=True, model_destination_folder=""):
         """
-        DESCRIPTION
-        load_saved_model: path to the model
-        CAN SPECIFY THE VALIDATION SET EITHER BY GIVING IT EXPLIOCITLY OR BY
-        GIVING IT A BATCH NUMBER
+        Trains the neural network. It is possible to specify the validation set
+        by either giving the function the number of a data batch, or by giving
+        it the array of the validation data and the array of its labels.
+        Parameters:
+            epochs: int. Number of training epochs.
+            load_saved_model: string. Full path to the saved model, including
+                              epoch number, e.g. "./bestmodel-40". Should be
+                              set to "" if no model is to be loaded.
+            training_batches: list of ints. Specifies the number-labels of the
+                              batches to be used for training.
+            size_of_minibatch: int. Number of image arrays to be used in each
+                               model-optimization round.
+            validation_inputarray: 4-d array. Only needs to be specified if
+                                   validation_batchnum is not. The array is the
+                                   input-data of our validation set.
+            validation_labels: 2-d array. Only needs to be specified if
+                               validation_batchnum is not. The array is the
+                               one-hot-encoded labels of our validation set.
+            validation_batchnum: int. Only needs to be specified if both
+                                 validation_inputarray and validation_labels
+                                 are not. Specifies the number-label of the
+                                 data batch we want to use as our validation
+                                 set.
+            printout: boolean. Sets whether to include stats-printouts during
+                      training. Will then print out validation-set accuracy,
+                      training-set loss and validation-set loss.
+            save_model: boolean. Sets whether to save intermediate trainined
+                        models as well as the final trained model.
+            model_destination_folder: string. If save_model is set to True,
+                                      this parameter is required to determine
+                                      the destination folder in which we save
+                                      the trained models.
+        Returns:
+            accuracy_list: list of validation-set accuracies at the end of each
+                           training epoch.
+            training_losses: list of training-set loss at the end of each
+                             training epoch.
+            validation_losses: list of validation-set loss at the end of each
+                               training epoch.
         """
         # Make the validation set#
         if validation_inputarray != []:
@@ -234,7 +288,20 @@ class ConvNet(object):
 
     def test(self, load_saved_model="", load_test_set="", test_set=[]):
         """
-        DESCRIPTION
+        Uses a saved pre-trained model to make predictions on a given set of
+        data.
+        Parameters:
+            load_saved_model: string. Full path to the saved model, including
+                              epoch number, e.g. "./bestmodel-40". Should be
+                              set to "" if no model is to be loaded.
+            load_test_set: string. Only needs to be specified if test_set is
+                           not. Full path to the .npy data containing the test
+                           set arrays to be fed into the network.
+            test_set: array. Only needs to be specified if load_test_set is
+                      not. This is the test-set aray to be fed into the neural
+                      network to obtain predicted probabilities for each label.
+        Returns: probabilities, obtained by applying a softmax function to the
+                 logits.
         """
         if test_set == []:
             testing_inputarray = np.load(load_test_set)

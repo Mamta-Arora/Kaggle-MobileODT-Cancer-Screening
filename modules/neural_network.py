@@ -168,7 +168,8 @@ def make_fullyconnected_layers(flattened_tensor, connected_layers, keep_prob):
     a list containing all the fully connected network layers.
     Parameters:
         flattened_tensor: the input tensor to the first fully connected layer
-        connected_layers: a list containing output-layer sizes, e.g. [10, 20]
+        connected_layers: a list containing full-connected-layer sizes, e.g.
+                          [10, 20].
         keep_prob: TensorFlow variable specifying the dropout (tf.float32)
     """
     allconnectedlayers = [flattened_tensor]

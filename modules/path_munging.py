@@ -97,7 +97,19 @@ def get_date_string():
 
 def submission(probabilities, testing_folder, submission_folder):
     """
-    DESCRIPTION. SAY THAT WE PUT THE DATETIME WHEN WE SAVE
+    Creates a csv submission file from predicted probabilities, compatible with
+    Kaggle's submission guidelines. The file has the name submissions followed
+    by the date and time of the file creating, i.e.
+    "submissions_yyyy-mm-dd_hh-mm.csv".
+    Parameters:
+        probabilities: array of predicted probabilities for each image
+        testing_folder: string specifying the folder containing the
+                        testing-input data. From this folder we fetch the image
+                        name labels (e.g. "15.jpg") and the name of the
+                        classification cateogries.
+        submission_folder: string specifying the folder into which we save the
+                           submission csv.
+    Returns: string specifying the full path of the csv file we have saved.
     """
     create_folder(submission_folder)
 
