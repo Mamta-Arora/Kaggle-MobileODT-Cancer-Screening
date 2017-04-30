@@ -7,6 +7,7 @@ Created on Thu Apr 27 21:42:57 2017
 """
 
 import tensorflow as tf
+import numpy as np
 from modules.data_loading import load_training_data, load_training_labels
 from modules.visualization import display_single_image
 from modules.neural_network import (neural_net_image_input,
@@ -36,6 +37,7 @@ class ConvNet(object):
 
         logits = self.conv_net(input_shape, output_channels,
                                convolutional_layers, connected_layers)
+        self.logits = logits
 
         y = neural_net_label_input(output_channels)
         self.y = y
@@ -229,3 +231,31 @@ class ConvNet(object):
                 save_path = saver.save(sess, savedmodel_path,
                                        global_step=epoch)
         return accuracy_list, training_losses, validation_losses
+
+    def test(self, load_saved_model="", load_test_set="", test_set=[]):
+        """
+        DESCRIPTION
+        """
+        if test_set == []:
+            testing_inputarray = np.load(load_test_set)
+        else:
+            testing_inputarray = test_set
+
+        with tf.Session() as sess:
+            saver = tf.train.Saver()
+            saver.restore(sess, load_saved_model)
+
+            # We need to supply a y. Since it plays no role when predicting
+            # probabilities, we supply an  empty matrix with the right
+            # dimensions.
+            empty_y = np.zeros((testing_inputarray.shape[0],
+                                testing_inputarray.shape[-1]))
+            # Ale the learning rate is unimportant here.
+            probabilities = sess.run(tf.nn.softmax(self.logits),
+                                     feed_dict={
+                                         self.x: testing_inputarray,
+                                         self.y: empty_y,
+                                         self.keep_prob_variable: 1.0,
+                                         self.learn_rate_variable:
+                                         self.learning_rate})
+        return probabilities
