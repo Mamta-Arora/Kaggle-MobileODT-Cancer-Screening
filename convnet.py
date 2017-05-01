@@ -224,7 +224,7 @@ class ConvNet(object):
             # "with tf.Session() as sess"
             # otherwise it will be very difficult to load the graph (unless we
             # name all the variables etc).
-            saver = tf.train.Saver()
+            saver = tf.train.Saver(max_to_keep=None)
 
             # Initializing the variables or load them from a saved model
             if load_saved_model == "":
@@ -331,7 +331,7 @@ class ConvNet(object):
             testing_inputarray = test_set
 
         with tf.Session() as sess:
-            saver = tf.train.Saver()
+            saver = tf.train.Saver(max_to_keep=None)
             saver.restore(sess, load_saved_model)
 
             # We need to supply a y. Since it plays no role when predicting
