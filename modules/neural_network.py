@@ -231,6 +231,76 @@ def make_cost_optimizer_accuracy(logits, labels, learning_rate):
 
 
 # =============================================================================
+# ============ FUNCTIONS FOR OVERSAMPLING UNBALANCED TRAINING DATA ============
+# =============================================================================
+
+
+def where_occurrences_of_label(label, list_of_labels):
+    """
+    Helper function to oversample.
+    Input: an element from a list, along with the list
+    Output: the index of where the element occurs in the list
+    N.B. This works also for a list of lists.
+    """
+    return np.where([list(lbl) == label for lbl in list_of_labels])[0]
+
+
+def oversample_array(array_to_oversample, index_of_labels,
+                     multiplicative_oversampling, highest_tally):
+    """
+    Helper function to oversample.
+    Performs the oversampling of an input array array_to_oversample, by a
+    factor give by the array multiplicative_oversampling, where the indices for
+    each label are given by the 2-d array index_of_labels. The length of each
+    oversampling is chopped off at the length determined by highest_tally.
+    """
+    oversampled_array = [np.repeat(array_to_oversample[index_of_labels[ii]],
+                                   multiplicative_oversampling[ii],
+                                   axis=0)[:highest_tally]
+                         for ii in range(len(multiplicative_oversampling))]
+    output_array = np.concatenate(oversampled_array)
+    return output_array
+
+
+def oversample(inputarray, inputlabels):
+    """
+    Oversamples the inputarray and the inputlabels, so that each class appears
+    an equal number of times (equal to the most-occurring class).
+    Parameters:
+       inputarray: numpy array containing the input array to the neural network
+       inputlabels: numpy array containing the labels to the inputarray
+    Returns tuple of:
+       outputarray: oversampled numpy array corresponding to inputarray.
+                    N.B. The ordering of inputarray has been completely lost,
+                    outputarray has been reshuffled.
+       outputlabels: numpy array containing the labels to outputarray
+    """
+    # Get the unique labels in inputlabels
+    unique_labels = [list(lbl) for lbl in set(tuple(lbl)
+                                              for lbl in inputlabels)]
+    # Find where each of these labels occurs in inputlabels
+    index_of_labels = [where_occurrences_of_label(lbl, inputlabels)
+                       for lbl in unique_labels]
+    tally_labels = [len(idx) for idx in index_of_labels]
+    highest_tally = max(tally_labels)
+    # Each occurrence of the label should be oversampled by the following
+    # factors
+    multiplicative_oversampling = np.ceil(float(highest_tally) /
+                                          np.array(tally_labels))
+    # Perform the oversampling
+    outputarray = oversample_array(inputarray, index_of_labels,
+                                   multiplicative_oversampling, highest_tally)
+    outputlabels = oversample_array(inputlabels, index_of_labels,
+                                    multiplicative_oversampling, highest_tally)
+    # Reshuffle the arrays, as they have become high ordered
+    np.random.seed(42)
+    rescrambled_order = np.random.permutation(range(len(outputlabels)))
+    outputarray = outputarray[rescrambled_order]
+    outputlabels = outputlabels[rescrambled_order]
+    return outputarray, outputlabels
+
+
+# =============================================================================
 # ======== FUNCTIONS FOR EVALUATING TRAINING SIZE VS MODEL COMPLEXITY =========
 # =============================================================================
 

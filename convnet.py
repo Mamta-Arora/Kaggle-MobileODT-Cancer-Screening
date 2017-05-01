@@ -18,7 +18,8 @@ from modules.neural_network import (neural_net_image_input,
                                     flatten,
                                     make_fullyconnected_layers,
                                     output,
-                                    make_cost_optimizer_accuracy)
+                                    make_cost_optimizer_accuracy,
+                                    oversample)
 from modules.path_munging import (batch_list, count_batches, get_next_epoch,
                                   get_modelpath_and_name, create_folder)
 
@@ -271,6 +272,10 @@ class ConvNet(object):
                                                    axis=0)
                         batch_labels = np.concatenate((batch_labels,
                                                        batch_labels), axis=0)
+                    # Finally, we need to resample the images so that the
+                    # different classes appear an equal number of times
+                    (batch_inputarray,
+                     batch_labels) = oversample(batch_inputarray, batch_labels)
                     for minibatch_inputarrays, minibatch_labels in zip(
                                                batch_inputarray, batch_labels):
                         # Train the network on a minibatch of data
