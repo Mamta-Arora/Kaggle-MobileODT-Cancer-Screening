@@ -151,9 +151,10 @@ class ConvNet(object):
         return count_batches(folder)
 
     def train(self, epochs=10, load_saved_model="", training_batches=[],
-              size_of_minibatch=2**6, validation_inputarray=[],
-              validation_labels=[], validation_batchnum=0, printout=True,
-              save_model=True, model_destination_folder=""):
+              leftright=False, updown=False, size_of_minibatch=2**6,
+              validation_inputarray=[], validation_labels=[],
+              validation_batchnum=0, printout=True, save_model=True,
+              model_destination_folder=""):
         """
         Trains the neural network. It is possible to specify the validation set
         by either giving the function the number of a data batch, or by giving
@@ -165,6 +166,10 @@ class ConvNet(object):
                               set to "" if no model is to be loaded.
             training_batches: list of ints. Specifies the number-labels of the
                               batches to be used for training.
+            leftright: boolean. Specifies whether we should also train on
+                                images that have been flipped left-to-right.
+            updown: boolean. Specifies whether we should also train on images
+                             that have been flipped upside-down.
             size_of_minibatch: int. Number of image arrays to be used in each
                                model-optimization round.
             validation_inputarray: 4-d array. Only needs to be specified if
@@ -249,6 +254,23 @@ class ConvNet(object):
                                                   size_of_minibatch)
                     batch_labels = batch_list(load_training_labels(batch_i),
                                               size_of_minibatch)
+                    # If we also include images flipped left-to-right or
+                    # upside-down, we add these to batch_inputarray and
+                    # batch_labels (the labels don't change of course).
+                    if leftright:
+                        batch_inputarray = np.concatenate(
+                                                (batch_inputarray,
+                                                 batch_inputarray[:, :, ::-1]),
+                                                axis=0)
+                        batch_labels = np.concatenate((batch_labels,
+                                                       batch_labels), axis=0)
+                    if updown:
+                        batch_inputarray = np.concatenate(
+                                                   (batch_inputarray,
+                                                    batch_inputarray[:, ::-1]),
+                                                   axis=0)
+                        batch_labels = np.concatenate((batch_labels,
+                                                       batch_labels), axis=0)
                     for minibatch_inputarrays, minibatch_labels in zip(
                                                batch_inputarray, batch_labels):
                         # Train the network on a minibatch of data
