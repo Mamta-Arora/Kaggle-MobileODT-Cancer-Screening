@@ -39,8 +39,8 @@ class DataPreprocessor(object):
                                   for folder in training_folders], [])
         testing_pathnames = all_image_paths(testing_folder)
         # In each folder all images depict the same cervical type
-        all_Types = np.sort([get_Type(pathname[0])
-                             for pathname in training_pathnames])
+        all_Types = np.sort(np.unique([get_Type(pathname[0])
+                                       for pathname in training_pathnames]))
         # We may now make the function that one-hot-encodes Types into arrays.
         # This will be necessary later when we make arrays with one-hot-encoded
         # labels.
