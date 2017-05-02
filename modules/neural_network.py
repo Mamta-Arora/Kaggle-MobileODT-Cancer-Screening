@@ -245,6 +245,15 @@ def where_occurrences_of_label(label, list_of_labels):
     return np.where([list(lbl) == label for lbl in list_of_labels])[0]
 
 
+def repeat_array(array_to_repeat, num_repeats):
+    """
+    Helper function to oversample_array. Concatenates array_to_repeat to
+    itself, num_repeats times.
+    """
+    return np.concatenate(tuple([array_to_repeat
+                                 for kk in range(num_repeats)]))
+
+
 def oversample_array(array_to_oversample, index_of_labels,
                      multiplicative_oversampling, highest_tally):
     """
@@ -254,9 +263,9 @@ def oversample_array(array_to_oversample, index_of_labels,
     each label are given by the 2-d array index_of_labels. The length of each
     oversampling is chopped off at the length determined by highest_tally.
     """
-    oversampled_array = [np.repeat(array_to_oversample[index_of_labels[ii]],
-                                   multiplicative_oversampling[ii],
-                                   axis=0)[:highest_tally]
+    oversampled_array = [repeat_array(array_to_oversample[index_of_labels[ii]],
+                                      int(multiplicative_oversampling[ii])
+                                      )[:highest_tally]
                          for ii in range(len(multiplicative_oversampling))]
     output_array = np.concatenate(oversampled_array)
     return output_array
