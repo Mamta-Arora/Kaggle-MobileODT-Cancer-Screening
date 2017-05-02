@@ -9,6 +9,8 @@ import scipy.ndimage
 from joblib import Parallel, delayed
 import multiprocessing
 import numpy as np
+from modules.data_loading import load_training_data, load_training_labels
+from modules.neural_network import oversample
 
 
 def one_hot_encode(list_of_types, encoder):
@@ -120,3 +122,38 @@ def flip_updown(input_arrays, input_labels):
                                    axis=0)
     output_labels = np.concatenate((input_labels, input_labels), axis=0)
     return flipped_array, output_labels
+
+
+def batch_load_manipulate(batch_number, leftright=True, updown=True):
+    """
+    Prepreocesses a batch of image arrays and their labels, by loading a batch
+    and includes images that have been flipped left-to-right and upside-down,
+    if specified by the function arguments. Also oversamples images to provide
+    a balanced set to train on.
+    Input:
+        batch_number: int specifying the batch number
+        leftright: booloean specifying whether to also include a flipped
+                   version of the images or not
+        updown: booloean specifying whether to also include a flipped
+                version of the images or not
+    Output:
+        loaded_batch: the oversampled image array
+        loaded_labels: the labels to loaded_batch
+    """
+    # Load the batch from disk
+    loaded_batch = load_training_data(batch_number)
+    loaded_labels = load_training_labels(batch_number)
+    # If we also include images flipped left-to-right or
+    # upside-down, we add these to batch_inputarray and
+    # batch_labels (the labels don't change of course).
+    if leftright:
+        (loaded_batch, loaded_labels) = flip_leftright(loaded_batch,
+                                                       loaded_labels)
+    if updown:
+        (loaded_batch, loaded_labels) = flip_updown(loaded_batch,
+                                                    loaded_labels)
+    # Finally, we need to resample the images so that the
+    # different classes appear an equal number of times
+    if oversample:
+        (loaded_batch, loaded_labels) = oversample(loaded_batch, loaded_labels)
+    return (loaded_batch, loaded_labels)

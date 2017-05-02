@@ -18,11 +18,10 @@ from modules.neural_network import (neural_net_image_input,
                                     flatten,
                                     make_fullyconnected_layers,
                                     output,
-                                    make_cost_optimizer_accuracy,
-                                    oversample)
+                                    make_cost_optimizer_accuracy)
 from modules.path_munging import (batch_list, count_batches, get_next_epoch,
                                   get_modelpath_and_name, create_folder)
-from modules.image_preprocessing import flip_leftright, flip_updown
+from modules.image_preprocessing import batch_load_manipulate
 
 
 class ConvNet(object):
@@ -250,24 +249,12 @@ class ConvNet(object):
             # need to go over all minibatches.
             for epoch in range(next_epoch, next_epoch + epochs):
                 for batch_i in training_batches:
-                    # Load the batch from disk
-                    loaded_batch = load_training_data(batch_i)
-                    loaded_labels = load_training_labels(batch_i)
-                    # If we also include images flipped left-to-right or
-                    # upside-down, we add these to batch_inputarray and
-                    # batch_labels (the labels don't change of course).
-                    if leftright:
-                        (loaded_batch,
-                         loaded_labels) = flip_leftright(loaded_batch,
-                                                         loaded_labels)
-                    if updown:
-                        (loaded_batch,
-                         loaded_labels) = flip_updown(loaded_batch,
-                                                      loaded_labels)
-                    # Finally, we need to resample the images so that the
-                    # different classes appear an equal number of times
-                    (loaded_batch,
-                     loaded_labels) = oversample(loaded_batch, loaded_labels)
+                    # Load the batch from disk, include flipped images, and
+                    # oversample to balance the training set.
+                    (loaded_batch, loaded_labels) = batch_load_manipulate(
+                                                           batch_i,
+                                                           leftright=leftright,
+                                                           updown=updown)
                     # Now split up the loaded data into minibatches according
                     # to size_of_minibatch.
                     batch_inputarray = batch_list(loaded_batch,
