@@ -8,6 +8,7 @@ Created on Thu Apr 27 12:05:08 2017
 import scipy.ndimage
 from joblib import Parallel, delayed
 import multiprocessing
+import numpy as np
 
 
 def one_hot_encode(list_of_types, encoder):
@@ -97,3 +98,25 @@ def array_all_labels(list_of_path_names, encoder, parallelize=False,
     # IN PYTHON 3: list(filter(None.__ne__, the_types))
     all_labels = one_hot_encode(the_types, encoder)
     return all_labels
+
+
+def flip_leftright(input_arrays, input_labels):
+    """
+    Convience function for increasing the amount of data by flipping the
+    images left-to-right. Returns the doubled-up imagearrays and their labels.
+    """
+    flipped_array = np.concatenate((input_arrays, input_arrays[:, :, ::-1]),
+                                   axis=0)
+    output_labels = np.concatenate((input_labels, input_labels), axis=0)
+    return flipped_array, output_labels
+
+
+def flip_updown(input_arrays, input_labels):
+    """
+    Convience function for increasing the amount of data by flipping the
+    images upside-down. Returns the doubled-up imagearrays and their labels.
+    """
+    flipped_array = np.concatenate((input_arrays, input_arrays[:, ::-1]),
+                                   axis=0)
+    output_labels = np.concatenate((input_labels, input_labels), axis=0)
+    return flipped_array, output_labels

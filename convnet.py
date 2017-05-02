@@ -22,6 +22,7 @@ from modules.neural_network import (neural_net_image_input,
                                     oversample)
 from modules.path_munging import (batch_list, count_batches, get_next_epoch,
                                   get_modelpath_and_name, create_folder)
+from modules.image_preprocessing import flip_leftright, flip_updown
 
 
 class ConvNet(object):
@@ -249,33 +250,29 @@ class ConvNet(object):
             # need to go over all minibatches.
             for epoch in range(next_epoch, next_epoch + epochs):
                 for batch_i in training_batches:
-                    # Load the batch from disk and split it up into minibatches
-                    # according to size_of_minibatch.
-                    batch_inputarray = batch_list(load_training_data(batch_i),
-                                                  size_of_minibatch)
-                    batch_labels = batch_list(load_training_labels(batch_i),
-                                              size_of_minibatch)
+                    # Load the batch from disk
+                    loaded_batch = load_training_data(batch_i)
+                    loaded_labels = load_training_labels(batch_i)
                     # If we also include images flipped left-to-right or
                     # upside-down, we add these to batch_inputarray and
                     # batch_labels (the labels don't change of course).
                     if leftright:
-                        batch_inputarray = np.concatenate(
-                                                (batch_inputarray,
-                                                 batch_inputarray[:, :, ::-1]),
-                                                axis=0)
-                        batch_labels = np.concatenate((batch_labels,
-                                                       batch_labels), axis=0)
+                        (loaded_batch,
+                         loaded_labels) = flip_leftright(loaded_batch,
+                                                         loaded_labels)
                     if updown:
-                        batch_inputarray = np.concatenate(
-                                                   (batch_inputarray,
-                                                    batch_inputarray[:, ::-1]),
-                                                   axis=0)
-                        batch_labels = np.concatenate((batch_labels,
-                                                       batch_labels), axis=0)
+                        (loaded_batch,
+                         loaded_labels) = flip_updown(loaded_batch,
+                                                      loaded_labels)
                     # Finally, we need to resample the images so that the
                     # different classes appear an equal number of times
-                    (batch_inputarray,
-                     batch_labels) = oversample(batch_inputarray, batch_labels)
+                    (loaded_batch,
+                     loaded_labels) = oversample(loaded_batch, loaded_labels)
+                    # Now split up the loaded data into minibatches according
+                    # to size_of_minibatch.
+                    batch_inputarray = batch_list(loaded_batch,
+                                                  size_of_minibatch)
+                    batch_labels = batch_list(loaded_labels, size_of_minibatch)
                     for minibatch_inputarrays, minibatch_labels in zip(
                                                batch_inputarray, batch_labels):
                         # Train the network on a minibatch of data
