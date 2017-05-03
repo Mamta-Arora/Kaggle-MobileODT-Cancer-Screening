@@ -157,3 +157,22 @@ def batch_load_manipulate(batch_number, leftright=True, updown=True):
     if oversample:
         (loaded_batch, loaded_labels) = oversample(loaded_batch, loaded_labels)
     return (loaded_batch, loaded_labels)
+
+
+def mean_RGB(single_image_array):
+    """
+    Turns an image (in array form) into a single pixel, as the average of all
+    the image's pixels. It then normalizes the pixels to sum to 1.
+    Input: image 3-d array.
+    Output: 1-d array describing the average (and mormalized) pixel.
+    """
+    mean_rgb_values = np.mean(np.mean(single_image_array, axis=0), axis=0)
+    normalized_values = mean_rgb_values / np.sum(mean_rgb_values)
+    return normalized_values
+
+
+def images_to_mean_RGB(array_of_images):
+    """
+    Conveniece function that applies mean_RGB to all images in an array.
+    """
+    return np.array([mean_RGB(img_ar) for img_ar in array_of_images])
