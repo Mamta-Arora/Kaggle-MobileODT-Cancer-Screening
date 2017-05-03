@@ -48,7 +48,7 @@ class BenchmarkModel(object):
 
     def train(self, training_batches=[], leftright=False, updown=False,
               validation_inputarray=[], validation_labels=[],
-              validation_batchnum=0):
+              validation_batchnum=0, agnosticic_average=0):
         """
         Trains the random forest on images reduced to a single (average) pixel.
         It is possible to specify the validation set by either giving the
@@ -113,7 +113,8 @@ class BenchmarkModel(object):
         (accuracy,
          train_loss,
          val_loss) = self.get_stats(input_train, labels_train, input_val,
-                                    labels_val)
+                                    labels_val,
+                                    agnosticic_average=agnosticic_average)
 
         return (accuracy, train_loss, val_loss)
 
@@ -140,7 +141,8 @@ class BenchmarkModel(object):
         return score
 
     def get_stats(self, training_inputarray, training_labels,
-                  validation_inputarray, validation_labels):
+                  validation_inputarray, validation_labels,
+                  agnosticic_average=0):
         """
         Obtain information about loss and validation accuracy
         : training_inputarray: Batch of Numpy image data
@@ -153,6 +155,9 @@ class BenchmarkModel(object):
                                            training_inputarray)
         val_probas = self.compute_probas(self.trained_model,
                                          validation_inputarray)
+        if agnosticic_average > 0:
+            train_probas = agnosticize(train_probas, agnosticic_average)
+            val_probas = agnosticize(val_probas, agnosticic_average)
 
         # Compute accuracy, training loss and validation loss
         accuracy = self.compute_score(self.trained_model,
