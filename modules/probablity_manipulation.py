@@ -27,12 +27,13 @@ def repeat_array(array_to_repeat, num_repeats):
                                  for kk in range(num_repeats)]))
 
 
-def agnosticize(probs, times):
+def agnosticize_single_prob(probs, times):
     """
     Average probability with completely agnostic probabilities, a
     user-specified number of times.
     Input:
-        probs: probabilities to average with agnostic probabilities
+        probs: 1-d array of probabilities of a single datapoint to average with
+               agnostic probabilities.
         times: number of times to average
     Returns:
         mean_probs: the averaged probabilities
@@ -42,6 +43,14 @@ def agnosticize(probs, times):
                                        [probs]))
     mean_probs = average_probabilities(probs_to_average)
     return mean_probs
+
+
+def agnosticize(probs, times):
+    """
+    Averages an array of probabilities with the agnostic probabilitiy, a
+    user-specified number of times.
+    """
+    return np.array([agnosticize_single_prob(pp, times) for pp in probs])
 
 
 def average_probabilities(list_of_probabilities):
