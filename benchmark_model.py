@@ -155,8 +155,9 @@ class BenchmarkModel(object):
                                          validation_inputarray)
 
         # Compute accuracy, training loss and validation loss
-        accuracy = self.trained_model.score(validation_inputarray,
-                                            validation_labels)
+        accuracy = self.compute_score(self.trained_model,
+                                      validation_inputarray,
+                                      validation_labels)
         train_loss = compute_loss(train_probas, training_labels)
         val_loss = compute_loss(val_probas, validation_labels)
         return accuracy, train_loss, val_loss
