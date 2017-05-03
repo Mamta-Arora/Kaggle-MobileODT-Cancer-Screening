@@ -114,8 +114,8 @@ class ConvNet(object):
         : session: Current TensorFlow session
         : training_inputarray: Batch of Numpy image data
         : training_labels: Batch of Numpy label data
-        : cost: TensorFlow cost function
-        : accuracy: TensorFlow accuracy function
+        : validation_inputarray: Batch of Numpy image data
+        : validation_labels: Batch of Numpy label data
         """
         training_cost_value = session.run(self.cost,
                                           feed_dict={
@@ -201,7 +201,7 @@ class ConvNet(object):
             validation_losses: list of validation-set loss at the end of each
                                training epoch.
         """
-        # Make the validation set#
+        # Make the validation set
         if validation_inputarray != []:
             val_array = validation_inputarray
             val_labels = validation_labels
