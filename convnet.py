@@ -8,7 +8,7 @@ Created on Thu Apr 27 21:42:57 2017
 
 import tensorflow as tf
 import numpy as np
-from modules.data_loading import load_training_data, load_training_labels
+from modules.data_loading import load_training_data
 from modules.visualization import display_single_image
 from modules.neural_network import (neural_net_image_input,
                                     neural_net_label_input,
@@ -206,8 +206,9 @@ class ConvNet(object):
             val_array = validation_inputarray
             val_labels = validation_labels
         else:
-            val_array = load_training_data(validation_batchnum)
-            val_labels = load_training_labels(validation_batchnum)
+            (val_array,
+             val_labels) = batch_load_manipulate(validation_batchnum,
+                                                 leftright=False, updown=False)
 
         if printout:
             print('Training...')
