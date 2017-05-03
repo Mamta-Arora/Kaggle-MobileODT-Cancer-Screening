@@ -73,5 +73,5 @@ def compute_loss(probabilities, labels):
     """
     vlog = np.vectorize(minmaxlog)
     log_probas = vlog(probabilities)
-    loss = - np.mean(log_probas * labels)
+    loss = -np.mean([np.dot(pp, lab) for pp, lab in zip(log_probas, labels)])
     return loss
