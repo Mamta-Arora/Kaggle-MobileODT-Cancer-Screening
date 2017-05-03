@@ -126,6 +126,19 @@ class BenchmarkModel(object):
                                         clf.predict_proba(inputdata))[:, :, 1])
         return probabilities
 
+    def compute_score(self, clf, inputdata, correctlabels):
+        """
+        Computes the probabilities assigned to the classes of the input data,
+        picks the likeliest one, and checks how many times on average it agrees
+        with the  correctlabels.
+        """
+        predicted_probas = self.compute_probas(clf, inputdata)
+        argmax_probas = np.array([np.argmax(pp) for pp in predicted_probas])
+        argmax_truelabels = np.array([np.argmax(pp) for pp in correctlabels])
+
+        score = np.mean(argmax_probas == argmax_truelabels)
+        return score
+
     def get_stats(self, training_inputarray, training_labels,
                   validation_inputarray, validation_labels):
         """
