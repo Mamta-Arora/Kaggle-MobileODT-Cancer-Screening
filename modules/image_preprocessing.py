@@ -11,6 +11,7 @@ import multiprocessing
 import numpy as np
 from modules.data_loading import load_training_data, load_training_labels
 from modules.neural_network import oversample
+from modules.image_cropping_KAGGLECODE import crop_image
 
 
 def one_hot_encode(list_of_types, encoder):
@@ -41,7 +42,30 @@ def get_Type(filepath, image_safe=False, resize_shape=(150, 150, 3)):
             return letter
 
 
-def load_normalize_image(path, resize_shape=(150, 150, 3)):
+def make_square(single_image_array):
+    """
+    Taken the array of an image and makes the image square by padding it with
+    0-value pixels on either side of the center.
+    Input and output are both numpy arrays describing an image
+    """
+    image_shape = single_image_array.shape
+    if image_shape[0] > image_shape[1]:
+        # Need to add columns to the image
+        colstoadd_eachside = int((image_shape[0] - image_shape[1]) / 2.)
+        square_image = np.pad(single_image_array, ((0, 0),
+                                                   (colstoadd_eachside,
+                                                    colstoadd_eachside),
+                                                   (0, 0)), "constant")
+    if image_shape[1] > image_shape[0]:
+        # Need to add rows to the image
+        rowstoadd_eachside = int((image_shape[1] - image_shape[0]) / 2.)
+        square_image = np.pad(single_image_array, ((rowstoadd_eachside,
+                                                    rowstoadd_eachside),
+                                                   (0, 0), (0, 0)), "constant")
+    return square_image
+
+
+def load_normalize_image(path, resize_shape=(150, 150, 3), crop=False):
     """
     Takes the directory path of an image and returns a normalized
     3-dimensional array representing that image.
@@ -49,6 +73,16 @@ def load_normalize_image(path, resize_shape=(150, 150, 3)):
     # First we load the image
     try:
         imagearray = scipy.ndimage.imread(path)
+        # The images contain a lot that isn't the area. The following function
+        # by a Kaggle kernel crops the image to the relevant area
+        if crop:
+            # Try and crop it. If there are problems, don't crop it.
+            try:
+                imagearray = crop_image(imagearray)
+            except:
+                pass
+        # Now we make the image square
+        imagearray = make_square(imagearray)
         # There is no need to reshape the image to be three-dimensional; they
         # already are. We do want to resize it however.
         imagearray = scipy.misc.imresize(imagearray, resize_shape)

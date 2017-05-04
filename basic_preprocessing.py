@@ -20,7 +20,8 @@ from modules.path_munging import (all_image_paths, batch_list, create_folder,
                                   count_batches)
 from modules.visualization import display_images
 from modules.image_preprocessing import (get_Type, array_all_images,
-                                         array_all_labels)
+                                         array_all_labels, make_square)
+from modules.image_cropping_KAGGLECODE import crop_image
 
 
 class DataPreprocessor(object):
@@ -74,7 +75,8 @@ class DataPreprocessor(object):
         fig.suptitle('Examples of loaded images:', fontsize=30)
         plt.show(fig)
 
-    def test_resizing(self, resize_shape=(150, 150, 3), index_image=17):
+    def test_resizing(self, crop=False, resize_shape=(150, 150, 3),
+                      index_image=17):
         """
         Checks whether a given image resizing is appropriate by displaying the
         resized image next to its original for comparison.
@@ -84,7 +86,13 @@ class DataPreprocessor(object):
                          resizing on.
         """
         imagearray = scipy.ndimage.imread(self.training_pathnames[index_image])
-        resized_imagearray = scipy.misc.imresize(imagearray, resize_shape)
+        if crop:
+            resized_imagearray = crop_image(imagearray)
+        else:
+            resized_imagearray = imagearray
+        resized_imagearray = make_square(resized_imagearray)
+        resized_imagearray = scipy.misc.imresize(resized_imagearray,
+                                                 resize_shape)
         fig, axes = display_images([imagearray, resized_imagearray])
         fig.suptitle('Image resolution (before and after preprocessing):',
                      fontsize=20)
