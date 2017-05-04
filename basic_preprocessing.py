@@ -101,8 +101,8 @@ class DataPreprocessor(object):
     def preprocess_save(self, data_folder="./TensorFlow_data",
                         training_subfolder="/training_data",
                         testing_subfolder="/testing_data",
-                        resize_shape=(150, 150, 3), batch_size=2**7,
-                        parallelize=True):
+                        resize_shape=(150, 150, 3), crop=False,
+                        batch_size=2**7, parallelize=True):
         """
         If this has not already been done, preprocess_save preprocesses all the
         images, turning them into numpy arrays, and saves them to disk.
@@ -127,6 +127,8 @@ class DataPreprocessor(object):
         if isfile(testingarray_folder + testingarrayimage_path) is False:
             print("Creating testing data arrays...")
             testing_images = array_all_images(self.testing_pathnames,
+                                              resize_shape=resize_shape,
+                                              crop=crop,
                                               parallelize=parallelize)
             if len(testing_images) != len(self.testing_pathnames):
                 print("WARNING: SOME TESTING IMAGES WERE NOT STORED AS NUMPY "
@@ -153,15 +155,19 @@ class DataPreprocessor(object):
             # the files we have.
             for ii, batch in enumerate(tqdm(training_pathnames_batches)):
                 training_images_batch = array_all_images(
-                                                       batch,
-                                                       parallelize=parallelize)
+                                                     batch,
+                                                     resize_shape=resize_shape,
+                                                     crop=crop,
+                                                     parallelize=parallelize)
                 np.save(trainingarrays_folder + "/training_images_batch" +
                         str(ii) + ".npy", training_images_batch)
 
                 training_labels_batch = array_all_labels(
-                                                       batch,
-                                                       self.encoder,
-                                                       parallelize=parallelize)
+                                                     batch,
+                                                     self.encoder,
+                                                     resize_shape=resize_shape,
+                                                     crop=crop,
+                                                     parallelize=parallelize)
                 np.save(trainingarrays_folder + "/training_labels_batch" +
                         str(ii) + ".npy", training_labels_batch)
             print("Training data arrays created")

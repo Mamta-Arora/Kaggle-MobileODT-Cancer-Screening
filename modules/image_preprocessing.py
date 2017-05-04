@@ -22,7 +22,8 @@ def one_hot_encode(list_of_types, encoder):
     return encoder.transform(list_of_types)
 
 
-def get_Type(filepath, image_safe=False, resize_shape=(150, 150, 3)):
+def get_Type(filepath, image_safe=False, resize_shape=(150, 150, 3),
+             crop=False):
     """
     Returns the type corresponding to an image found in filepath. If
     image_safe is set to True, we attempt to preproces the image (using the
@@ -36,7 +37,8 @@ def get_Type(filepath, image_safe=False, resize_shape=(150, 150, 3)):
     if image_safe is False:
         return letter
     else:
-        imagearray = load_normalize_image(filepath, resize_shape=resize_shape)
+        imagearray = load_normalize_image(filepath, resize_shape=resize_shape,
+                                          crop=crop)
         if imagearray is not None:
             # The preprocessing was successful
             return letter
@@ -94,7 +96,8 @@ def load_normalize_image(path, resize_shape=(150, 150, 3), crop=False):
         pass
 
 
-def array_all_images(list_of_path_names, parallelize=False):
+def array_all_images(list_of_path_names, resize_shape=(150, 150, 3),
+                     crop=False, parallelize=False):
     """
     Takes a list of directory paths of images and returns a 4-dimensional array
     containing the pixel-data of those images. The shape is:
@@ -103,10 +106,12 @@ def array_all_images(list_of_path_names, parallelize=False):
     if parallelize:
         num_cores = multiprocessing.cpu_count()
         all_images = Parallel(n_jobs=num_cores)(
-                delayed(load_normalize_image)(path)
+                delayed(load_normalize_image)(path, resize_shape=resize_shape,
+                                              crop=crop)
                 for path in list_of_path_names)
     else:
-        all_images = [load_normalize_image(path)
+        all_images = [load_normalize_image(path, resize_shape=resize_shape,
+                                           crop=crop)
                       for path in list_of_path_names]
     # Some of these might be None since the function load_normalize_image
     # does not load broken images. We now remove these Nones.
@@ -115,8 +120,8 @@ def array_all_images(list_of_path_names, parallelize=False):
     return all_images
 
 
-def array_all_labels(list_of_path_names, encoder, parallelize=False,
-                     resize_shape=(150, 150, 3)):
+def array_all_labels(list_of_path_names, encoder, resize_shape=(150, 150, 3),
+                     crop=False, parallelize=False):
     """
     Takes a list of directory paths of images and returns a 2-dimensional array
     containing the one-hot-encoded labels of those images
@@ -125,10 +130,11 @@ def array_all_labels(list_of_path_names, encoder, parallelize=False,
         num_cores = multiprocessing.cpu_count()
         the_types = Parallel(n_jobs=num_cores)(
                 delayed(get_Type)(path, image_safe=True,
-                                  resize_shape=resize_shape)
+                                  resize_shape=resize_shape, crop=crop)
                 for path in list_of_path_names)
     else:
-        the_types = [get_Type(path, image_safe=True, resize_shape=resize_shape)
+        the_types = [get_Type(path, image_safe=True, resize_shape=resize_shape,
+                              crop=crop)
                      for path in list_of_path_names]
     the_types = [typ for typ in the_types if typ is not None]
     # IN PYTHON 3: list(filter(None.__ne__, the_types))
