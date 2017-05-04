@@ -38,7 +38,6 @@ def ncolours(newimage, n_colors):
     return diagram
 
 def mask(codebook, labels, w, h, origimage, cutoff = 0.33):
-    """Recreate the (compressed) image from the code book & labels"""
     d = codebook.shape[1]
     image = np.zeros((w, h, d))
     label_idx = 0
@@ -55,7 +54,6 @@ def mask(codebook, labels, w, h, origimage, cutoff = 0.33):
     return image
 
 def recreate_image(codebook, labels, w, h):
-    """Recreate the (compressed) image from the code book & labels"""
     d = codebook.shape[1]
     image = np.zeros((w, h, d))
     label_idx = 0
