@@ -58,12 +58,14 @@ def make_square(single_image_array):
                                                    (colstoadd_eachside,
                                                     colstoadd_eachside),
                                                    (0, 0)), "constant")
-    if image_shape[1] > image_shape[0]:
+    elif image_shape[1] > image_shape[0]:
         # Need to add rows to the image
         rowstoadd_eachside = int((image_shape[1] - image_shape[0]) / 2.)
         square_image = np.pad(single_image_array, ((rowstoadd_eachside,
                                                     rowstoadd_eachside),
                                                    (0, 0), (0, 0)), "constant")
+    else:
+        square_image = single_image_array
     return square_image
 
 
