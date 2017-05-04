@@ -11,12 +11,14 @@ import numpy as np
 from sklearn.cluster import KMeans
 from sklearn.utils import shuffle
 
-def diagramify(imgarray, n_colors, cutoff = 0.33):
-    masked = makemask(imgarray, cutoff = cutoff)
+
+def diagramify(imgarray, n_colors=5, cutoff=0.33):
+    masked = makemask(imgarray, cutoff=cutoff)
     diagram = ncolours(masked, n_colors)
     return diagram
 
-def makemask(oneimage, cutoff = 0.33):
+
+def makemask(oneimage, cutoff=0.33):
     n_colors = 2
     w, h, d = tuple(oneimage.shape)
     assert d == 3
@@ -24,11 +26,13 @@ def makemask(oneimage, cutoff = 0.33):
     image_array_sample = shuffle(image_array, random_state=0)[:1000]
     kmeans = KMeans(n_clusters=n_colors, random_state=0).fit(image_array_sample)
     labels = kmeans.predict(image_array)
-    newimage = mask(kmeans.cluster_centers_, labels, w, h, oneimage, cutoff = cutoff)
+    newimage = mask(kmeans.cluster_centers_, labels, w, h, oneimage,
+                    cutoff=cutoff)
     return newimage
 
+
 def ncolours(newimage, n_colors):
-    w, h, d = tuple(newimage.shape)    
+    w, h, d = tuple(newimage.shape)
     assert d == 3
     image_array = np.reshape(newimage, (w * h, d))
     image_array_sample = shuffle(image_array, random_state=0)[:1000]
@@ -37,7 +41,8 @@ def ncolours(newimage, n_colors):
     diagram = recreate_image(kmeans.cluster_centers_, labels, w, h)
     return diagram
 
-def mask(codebook, labels, w, h, origimage, cutoff = 0.33):
+
+def mask(codebook, labels, w, h, origimage, cutoff=0.33):
     d = codebook.shape[1]
     image = np.zeros((w, h, d))
     label_idx = 0
@@ -52,6 +57,7 @@ def mask(codebook, labels, w, h, origimage, cutoff = 0.33):
                 image[i][j] = origimage[i][j]
             label_idx += 1
     return image
+
 
 def recreate_image(codebook, labels, w, h):
     d = codebook.shape[1]

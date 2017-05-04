@@ -22,6 +22,7 @@ from modules.visualization import display_images
 from modules.image_preprocessing import (get_Type, array_all_images,
                                          array_all_labels, make_square)
 from modules.image_cropping_KAGGLECODE import crop_image
+from modules.diagramize import diagramify
 
 
 class DataPreprocessor(object):
@@ -76,7 +77,7 @@ class DataPreprocessor(object):
         plt.show(fig)
 
     def test_resizing(self, crop=False, resize_shape=(150, 150, 3),
-                      index_image=17):
+                      diagram=False, index_image=17):
         """
         Checks whether a given image resizing is appropriate by displaying the
         resized image next to its original for comparison.
@@ -87,10 +88,12 @@ class DataPreprocessor(object):
         """
         imagearray = scipy.ndimage.imread(self.training_pathnames[index_image])
         if crop:
-            resized_imagearray = crop_image(imagearray)
+            resized_imagearray = crop_image(imagearray) / 255.
         else:
-            resized_imagearray = imagearray
-        resized_imagearray = make_square(resized_imagearray)
+            resized_imagearray = imagearray / 255.
+        if diagram:
+            resized_imagearray = diagramify(resized_imagearray)
+        resized_imagearray = 1. * make_square(resized_imagearray)
         resized_imagearray = scipy.misc.imresize(resized_imagearray,
                                                  resize_shape)
         fig, axes = display_images([imagearray, resized_imagearray])
@@ -102,7 +105,7 @@ class DataPreprocessor(object):
                         training_subfolder="/training_data",
                         testing_subfolder="/testing_data",
                         resize_shape=(150, 150, 3), crop=False,
-                        batch_size=2**7, parallelize=True):
+                        diagram=False, batch_size=2**7, parallelize=True):
         """
         If this has not already been done, preprocess_save preprocesses all the
         images, turning them into numpy arrays, and saves them to disk.
@@ -128,7 +131,7 @@ class DataPreprocessor(object):
             print("Creating testing data arrays...")
             testing_images = array_all_images(self.testing_pathnames,
                                               resize_shape=resize_shape,
-                                              crop=crop,
+                                              crop=crop, diagram=diagram,
                                               parallelize=parallelize)
             if len(testing_images) != len(self.testing_pathnames):
                 print("WARNING: SOME TESTING IMAGES WERE NOT STORED AS NUMPY "
@@ -158,6 +161,7 @@ class DataPreprocessor(object):
                                                      batch,
                                                      resize_shape=resize_shape,
                                                      crop=crop,
+                                                     diagram=diagram,
                                                      parallelize=parallelize)
                 np.save(trainingarrays_folder + "/training_images_batch" +
                         str(ii) + ".npy", training_images_batch)
@@ -167,6 +171,7 @@ class DataPreprocessor(object):
                                                      self.encoder,
                                                      resize_shape=resize_shape,
                                                      crop=crop,
+                                                     diagram=diagram,
                                                      parallelize=parallelize)
                 np.save(trainingarrays_folder + "/training_labels_batch" +
                         str(ii) + ".npy", training_labels_batch)
