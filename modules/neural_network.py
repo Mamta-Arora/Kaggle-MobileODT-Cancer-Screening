@@ -78,9 +78,14 @@ def conv2d_maxpool(x_tensor, conv_num_outputs, conv_ksize, conv_strides,
                                padding='SAME')
     h_conv = tf.nn.relu(convolution + b_conv)
 
-    h_pool = tf.nn.max_pool(h_conv, ksize=[1, pool_ksize[0], pool_ksize[1], 1],
-                            strides=[1, pool_strides[0], pool_strides[1], 1],
-                            padding='SAME')
+    if pool_ksize == (1, 1) and pool_strides == (1, 1):
+        h_pool = h_conv
+    else:
+        h_pool = tf.nn.max_pool(h_conv,
+                                ksize=[1, pool_ksize[0], pool_ksize[1], 1],
+                                strides=[1, pool_strides[0],
+                                         pool_strides[1], 1],
+                                padding='SAME')
 
     return h_pool
 
@@ -108,8 +113,7 @@ def make_convolutional_layers(x, convolutional_layers, keep_prob):
                            convolutional_layers[0][1],
                            convolutional_layers[0][2],
                            convolutional_layers[0][3],
-                           convolutional_layers[0][4]),
-                       keep_prob)]
+                           convolutional_layers[0][4]), keep_prob)]
     # Now for each additional element in convolutional_layers, add a new layer
     # which takes as input the previous layer.
     for ii, conv_lyr in enumerate(convolutional_layers):
