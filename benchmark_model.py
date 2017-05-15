@@ -12,7 +12,7 @@ from modules.data_loading import load_training_data
 from modules.visualization import display_single_image
 from modules.path_munging import count_batches
 from modules.image_preprocessing import (batch_load_manipulate,
-                                         images_to_mean_RGB)
+                                         images_to_percentage_red)
 from modules.probablity_manipulation import compute_loss, agnosticize
 
 
@@ -101,8 +101,9 @@ class BenchmarkModel(object):
                                                  leftright=False, updown=False)
 
         # Turn the input data for each image into a single average pixel
-        input_train = images_to_mean_RGB(all_train_data)
-        input_val = images_to_mean_RGB(val_data)
+        # TODO: Change this to the number of red pixels [[float],[float],...]
+        input_train = images_to_percentage_red(all_train_data)
+        input_val = images_to_percentage_red(val_data)
 
         # Fit random forest
         rand_forest = RandomForestClassifier(n_estimators=1000)
@@ -189,7 +190,8 @@ class BenchmarkModel(object):
         else:
             testing_inputarray = test_set
 
-        input_test = images_to_mean_RGB(testing_inputarray)
+        # TODO: Change this to the number of red pixels [[float],[float],...]
+        input_test = images_to_percentage_red(testing_inputarray)
         probabilities = self.compute_probas(self.trained_model, input_test)
         if agnosticic_average > 0:
             probabilities = agnosticize(probabilities, agnosticic_average)

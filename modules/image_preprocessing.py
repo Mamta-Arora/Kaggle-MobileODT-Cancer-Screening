@@ -258,6 +258,27 @@ def filter_out_nonred(list_of_pixels):
             if pixel[0] > 160./255. and max(pixel[1], pixel[2]) < 60./255.]
 
 
+def percentage_red(list_of_pixels):
+    """
+    Convenience function. Calculates the mean number of red pixels from a list
+    of pixels.
+    """
+    red_pixels = filter_out_nonred(list_of_pixels)
+    red_pixel_percentage = float(len(red_pixels)) / float(len(list_of_pixels))
+    return red_pixel_percentage
+
+
+def images_to_percentage_red(array_of_images):
+    """
+    Conveniece function that applies mean_RGB to all images in an array.
+    """
+    return np.array([[percentage_red(
+                          filter_out_black(
+                              # Flatten image to a list of pixels
+                              list(itertools.chain.from_iterable(img_ar))))]
+                     for img_ar in array_of_images])
+
+
 def path_to_meanRGB_and_red_pixels(path, imagefilter="black"):
     """
     Input: string specifying the path to an image.
@@ -269,6 +290,5 @@ def path_to_meanRGB_and_red_pixels(path, imagefilter="black"):
         if imagefilter == "black":
             all_pixels = filter_out_black(all_pixels)
         mean_RBG = np.mean(all_pixels, axis=0)
-        red_pixels = filter_out_nonred(all_pixels)
-        red_pixel_percentage = float(len(red_pixels)) / float(len(all_pixels))
+        red_pixel_percentage = percentage_red(all_pixels)
         return mean_RBG, red_pixel_percentage
