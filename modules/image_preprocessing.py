@@ -13,6 +13,7 @@ from modules.data_loading import load_training_data, load_training_labels
 from modules.neural_network import oversample
 from modules.image_cropping_KAGGLECODE import crop_image
 from modules.diagramize import diagramify
+import itertools
 
 
 def one_hot_encode(list_of_types, encoder):
@@ -224,3 +225,50 @@ def images_to_mean_RGB(array_of_images):
     Conveniece function that applies mean_RGB to all images in an array.
     """
     return np.array([mean_RGB(img_ar) for img_ar in array_of_images])
+
+
+def flatten_pixels(pathname):
+    """
+    Convenience function. Input is a string specifying the path to an image.
+    Output is a 1-d list of all pixels.
+    """
+    try:
+        # Flatten the pixels to a 1-d list
+        all_pixels = list(itertools.chain.from_iterable(
+                                        scipy.ndimage.imread(pathname) / 255.))
+        return all_pixels
+    except:
+        pass
+
+
+def filter_out_black(list_of_pixels):
+    """
+    Takes a 1-d list of pixels and filters out the very dark pixels. Returns
+    the list of non-dark pixels
+    """
+    return [pixel for pixel in list_of_pixels if max(pixel) > 0.1]
+
+
+def filter_out_nonred(list_of_pixels):
+    """
+    Takes a 1-d list of pixels and filters out the pixels that aren't
+    "red-colored". Returns the list of red pixels.
+    """
+    return [pixel for pixel in list_of_pixels
+            if pixel[0] > 160./255. and max(pixel[1], pixel[2]) < 60./255.]
+
+
+def path_to_meanRGB_and_red_pixels(path, imagefilter="black"):
+    """
+    Input: string specifying the path to an image.
+    Output: tuple of the form (mean_RGB of the pixels of the image,
+                               percentage of red pixels)
+    """
+    all_pixels = flatten_pixels(path)
+    if all_pixels is not None:
+        if imagefilter == "black":
+            all_pixels = filter_out_black(all_pixels)
+        mean_RBG = np.mean(all_pixels, axis=0)
+        red_pixels = filter_out_nonred(all_pixels)
+        red_pixel_percentage = float(len(red_pixels)) / float(len(all_pixels))
+        return mean_RBG, red_pixel_percentage
