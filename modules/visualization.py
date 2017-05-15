@@ -130,3 +130,19 @@ def display_image_probabilities(list_of_image_matrices, probabilities,
     for remainingax in axes.ravel()[len(list_of_image_matrices):]:
         remainingax.axis("off")
     return fig, axes
+
+
+def darkBrewerColors(listlength=6):
+    """
+    Returns a list of dark Brewer-scale colors.
+    """
+    return np.array(["#1f78b4", "#33a02c", "#e31a1c", "#ff7f00", "#6a3d9a",
+                     "#b15928"][:min(6, listlength)])
+
+
+def lightBrewerColors(listlength=12):
+    """
+    Returns a list of light Brewer-scale colors.
+    """
+    return np.array(["#a6cee3", "#b2df8a", "#fb9a99", "#fdbf6f", "#cab2d6",
+                     "#ffff99"][:min(6, listlength)])
