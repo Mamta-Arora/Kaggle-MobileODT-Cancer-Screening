@@ -100,8 +100,8 @@ class BenchmarkModel(object):
              labels_val) = batch_load_manipulate(validation_batchnum,
                                                  leftright=False, updown=False)
 
-        # Turn the input data for each image into a single average pixel
-        # TODO: Change this to the number of red pixels [[float],[float],...]
+        # Turn the input data for each image into a single number, which equals
+        # the percentage of red pixels in the image
         input_train = images_to_percentage_red(all_train_data)
         input_val = images_to_percentage_red(val_data)
 
@@ -190,7 +190,6 @@ class BenchmarkModel(object):
         else:
             testing_inputarray = test_set
 
-        # TODO: Change this to the number of red pixels [[float],[float],...]
         input_test = images_to_percentage_red(testing_inputarray)
         probabilities = self.compute_probas(self.trained_model, input_test)
         if agnosticic_average > 0:
