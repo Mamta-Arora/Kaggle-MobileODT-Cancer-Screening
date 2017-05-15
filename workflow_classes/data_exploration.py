@@ -62,7 +62,8 @@ class DataExplorator(DataPreprocessor):
         for each image of a given classification type, and returns the mean RGB
         values for all images of that classification type.
         """
-        allRGBs = np.transpose([RGBred[0] for RGBred in typXRGBsRed])
+        allRGBs = np.transpose([RGBred[0] for RGBred in typXRGBsRed
+                                if RGBred is not None])
         mean_R_G_B = [np.mean(color) for color in allRGBs]
         return mean_R_G_B
 
@@ -98,14 +99,15 @@ class DataExplorator(DataPreprocessor):
 
         # for each cervix type, we plot a scatterplot of all the images' RGBs
         for typXRGBsRed, color, labl in zip(mean_RGBs_and_red_ratios,
-                                            darkBrewerColors(),
+                                            ["#1f77b4", "#ff7f0e", "#2ca02c"],
                                             self.alltypes):
             # Extract the RGB values of each image
-            allRGBs = np.array([RGBred[0] for RGBred in typXRGBsRed])
+            allRGBs = np.array([RGBred[0] for RGBred in typXRGBsRed
+                                if RGBred is not None])
             reds = allRGBs[:, 0]
             greens = allRGBs[:, 1]
             blues = allRGBs[:, 2]
-            ax.scatter(reds, greens, blues, c=color, label=labl)
+            ax.scatter(reds, greens, blues, c=color, label=labl, alpha=0.4)
 
         ax.set_xlabel("Red")
         ax.set_ylabel("Green")
@@ -122,7 +124,8 @@ class DataExplorator(DataPreprocessor):
         mean_RGBs_and_red_ratios = np.load(self.data_path)
 
         mean_red_percentage_bytype = [
-                           100 * np.mean([RGBred[1] for RGBred in typXRGBsRed])
+                           100 * np.mean([RGBred[1] for RGBred in typXRGBsRed
+                                          if RGBred is not None])
                            for typXRGBsRed in mean_RGBs_and_red_ratios]
 
         df_to_plot = pd.DataFrame([mean_red_percentage_bytype],
