@@ -107,6 +107,10 @@ class DataExplorator(DataPreprocessor):
             blues = allRGBs[:, 2]
             ax.scatter(reds, greens, blues, c=color, label=labl)
 
+        ax.set_xlabel("Red")
+        ax.set_ylabel("Green")
+        ax.set_zlabel("Blue")
+        ax.set_title("RGB-space scatterplot of images\n")
         plt.legend()
         plt.show()
 
