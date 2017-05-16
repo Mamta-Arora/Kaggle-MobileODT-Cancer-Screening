@@ -48,7 +48,7 @@ class BenchmarkModel(object):
 
     def train(self, training_batches=[], leftright=False, updown=False,
               validation_inputarray=[], validation_labels=[],
-              validation_batchnum=0, agnosticic_average=0):
+              validation_batchnum=0, agnosticic_average=0, training_folder=""):
         """
         Trains the random forest on images reduced to a single (average) pixel.
         It is possible to specify the validation set by either giving the
@@ -85,7 +85,8 @@ class BenchmarkModel(object):
             (train_data,
              train_labels) = batch_load_manipulate(batch_i,
                                                    leftright=leftright,
-                                                   updown=updown)
+                                                   updown=updown,
+                                                   batch_loc=training_folder)
             all_train_data.append(train_data)
             all_train_labels.append(train_labels)
         all_train_data = np.concatenate(all_train_data)
@@ -98,7 +99,8 @@ class BenchmarkModel(object):
         else:
             (val_data,
              labels_val) = batch_load_manipulate(validation_batchnum,
-                                                 leftright=False, updown=False)
+                                                 leftright=False, updown=False,
+                                                 batch_loc=training_folder)
 
         # Turn the input data for each image into a single number, which equals
         # the percentage of red pixels in the image

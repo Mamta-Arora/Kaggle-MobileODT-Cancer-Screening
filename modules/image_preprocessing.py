@@ -173,7 +173,8 @@ def flip_updown(input_arrays, input_labels):
     return flipped_array, output_labels
 
 
-def batch_load_manipulate(batch_number, leftright=True, updown=True):
+def batch_load_manipulate(batch_number, leftright=True, updown=True,
+                          batch_loc=""):
     """
     Prepreocesses a batch of image arrays and their labels, by loading a batch
     and includes images that have been flipped left-to-right and upside-down,
@@ -185,13 +186,15 @@ def batch_load_manipulate(batch_number, leftright=True, updown=True):
                    version of the images or not
         updown: booloean specifying whether to also include a flipped
                 version of the images or not
+        batch_loc: string specifying the folder location from which we are to
+                   fetch the numpy array data
     Output:
         loaded_batch: the oversampled image array
         loaded_labels: the labels to loaded_batch
     """
     # Load the batch from disk
-    loaded_batch = load_training_data(batch_number)
-    loaded_labels = load_training_labels(batch_number)
+    loaded_batch = load_training_data(batch_number, batch_loc=batch_loc)
+    loaded_labels = load_training_labels(batch_number, batch_loc=batch_loc)
     # If we also include images flipped left-to-right or
     # upside-down, we add these to batch_inputarray and
     # batch_labels (the labels don't change of course).

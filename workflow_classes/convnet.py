@@ -151,11 +151,11 @@ class ConvNet(object):
         """
         return count_batches(folder)
 
-    def train(self, epochs=10, load_saved_model="", training_batches=[],
-              leftright=False, updown=False, size_of_minibatch=2**6,
-              validation_inputarray=[], validation_labels=[],
-              validation_batchnum=0, printout=True, save_model=True,
-              model_destination_folder=""):
+    def train(self, epochs=10, load_saved_model="", training_folder="",
+              training_batches=[], leftright=False, updown=False,
+              size_of_minibatch=2**6, validation_inputarray=[],
+              validation_labels=[], validation_batchnum=0, printout=True,
+              save_model=True, model_destination_folder=""):
         """
         Trains the neural network. It is possible to specify the validation set
         by either giving the function the number of a data batch, or by giving
@@ -165,6 +165,8 @@ class ConvNet(object):
             load_saved_model: string. Full path to the saved model, including
                               epoch number, e.g. "./bestmodel-40". Should be
                               set to "" if no model is to be loaded.
+            training_folder: string. Path to the folder from which we get the
+                             numpy arrays containing the training data.
             training_batches: list of ints. Specifies the number-labels of the
                               batches to be used for training.
             leftright: boolean. Specifies whether we should also train on
@@ -208,7 +210,8 @@ class ConvNet(object):
         else:
             (val_array,
              val_labels) = batch_load_manipulate(validation_batchnum,
-                                                 leftright=False, updown=False)
+                                                 leftright=False, updown=False,
+                                                 batch_loc=training_folder)
 
         if printout:
             print('Training...')
@@ -253,9 +256,10 @@ class ConvNet(object):
                     # Load the batch from disk, include flipped images, and
                     # oversample to balance the training set.
                     (loaded_batch, loaded_labels) = batch_load_manipulate(
-                                                           batch_i,
-                                                           leftright=leftright,
-                                                           updown=updown)
+                                                     batch_i,
+                                                     leftright=leftright,
+                                                     updown=updown,
+                                                     batch_loc=training_folder)
                     # Now split up the loaded data into minibatches according
                     # to size_of_minibatch.
                     batch_inputarray = batch_list(loaded_batch,
