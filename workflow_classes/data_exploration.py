@@ -6,7 +6,7 @@ Created on Mon May 15 11:35:40 2017
 @author: daniele
 """
 
-from basic_preprocessing import DataPreprocessor
+from workflow_classes.basic_preprocessing import DataPreprocessor
 from modules.image_preprocessing import (path_to_meanRGB_and_red_pixels,
                                          get_Type)
 from modules.path_munging import create_folder
