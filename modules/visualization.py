@@ -39,6 +39,8 @@ def display_single_image(imagearray):
     """
     array_to_plot = imagearray
     print("Image shape: {}".format(imagearray.shape))
+    plt.clf()
+    plt.figure(figsize=(6, 3))
     plt.imshow(array_to_plot)
     plt.axis("off")
     plt.show()
