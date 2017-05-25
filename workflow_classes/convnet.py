@@ -308,8 +308,7 @@ class ConvNet(object):
         data.
         Parameters:
             load_saved_model: string. Full path to the saved model, including
-                              epoch number, e.g. "./bestmodel-40". Should be
-                              set to "" if no model is to be loaded.
+                              epoch number, e.g. "./bestmodel-40".
             load_test_set: string. Only needs to be specified if test_set is
                            not. Full path to the .npy data containing the test
                            set arrays to be fed into the network.
@@ -333,7 +332,7 @@ class ConvNet(object):
             # dimensions.
             empty_y = np.zeros((testing_inputarray.shape[0],
                                 testing_inputarray.shape[-1]))
-            # Ale the learning rate is unimportant here.
+            # The learning rate is unimportant here.
             probabilities = sess.run(tf.nn.softmax(self.logits),
                                      feed_dict={
                                          self.x: testing_inputarray,
