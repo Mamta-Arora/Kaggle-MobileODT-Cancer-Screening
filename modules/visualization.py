@@ -69,13 +69,17 @@ def plot_best_scores(best_accuracy, best_train_loss, best_val_loss):
     Given the best accuracy, training loss, validation loss for each training
     run (with increasing amount of data), plots the values.
     """
-    plt.plot(best_accuracy)
+    plt.clf()
+    plt.figure(figsize=(6, 3))
+    plt.plot(range(1, len(best_accuracy)+1), best_accuracy)
     plt.xlabel("Number of batches in training")
     plt.ylabel("Best Accuracy")
     plt.show()
 
-    plt.plot(best_train_loss, label="Training loss")
-    plt.plot(best_val_loss, label="Validation loss")
+    # plt.plot(range(1, len(best_train_loss)+1), best_train_loss,
+    #          label="Training loss")
+    plt.plot(range(1, len(best_val_loss)+1), best_val_loss,
+             label="Validation loss")
     plt.xlabel("Number of batches in training")
     plt.ylabel("Best loss")
     plt.legend()
