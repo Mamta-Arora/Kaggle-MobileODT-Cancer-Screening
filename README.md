@@ -7,7 +7,7 @@ All of the code necessary for implementing the exploratory data analysis, benchm
 
 In order to run the main notebook `FullWorkflow.ipynb`, it is necessary to first acquire the training data. This is done from the Kaggle competition website: https://www.kaggle.com/c/intel-mobileodt-cervical-cancer-screening/data . It is only necessary to download the files `test.7z` and `train.7z`.
 
-This data should be placed in a folder called `Data` which lies in the same directory as the jupyter notebook: the training data should be in the folder `./Data/train` and the testing data should be in a folder `./Data/test`.
+This data should be placed in a folder called `Data` which lies in the same directory as the jupyter notebook: the training data should be in the folder `./Data/train` and the testing data should be in a folder `./Data/test`. The `train` folder should have three subfolders: `./Data/train/Type_1`, `./Data/train/Type_2` and `./Data/train/Type_3`, each folder containing a lot of images.
 
 ## Required python packages
 
