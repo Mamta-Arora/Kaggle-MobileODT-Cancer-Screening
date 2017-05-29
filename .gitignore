@@ -10,8 +10,4 @@ submissions/
 
 *.pyc
 
-BenchmarkProbabilities/
-
 OldRuns/
-
-ExploratoryAnalysis/
